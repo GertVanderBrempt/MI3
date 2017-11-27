@@ -1,5 +1,5 @@
 <?php
-//http://getfit.getenjoyment.net/getfitdb.php
+//http://getfit.getenjoyment.net/getfitdb.php?bewerking=selGEB
     $servername = "fdb13.awardspace.net"; // de servernaam die je van je hosting firma hebt ontvangen
     $serverpoort = "3306"; //poort
     $username   = "2518084_getfit"; // de gebruikersnaam die je van je hosting firma hebt ontvangen
@@ -7,8 +7,10 @@
     $dbname     = "2518084_getfit"; // de naam van de databank die je van je hosting firma hebt ontvangen
     
     // Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname, $serverpoort) or die(mysqli_connect_error());
-
+     $conn = mysqli_connect($servername, $username, $password, $dbname, $serverpoort) or die(mysqli_connect_error());
+     
+     $bewerking = $_GET['bewerking'];
+if($bewerking == "getGeb"){
         $result = $conn -> query("SELECT * FROM tblGebruiker");
 
         // maak van de inhoud van deze result een json object waarvan
@@ -18,8 +20,31 @@ $conn = mysqli_connect($servername, $username, $password, $dbname, $serverpoort)
         // maak geheugenresources vrij :
         mysqli_free_result($result);
         die($return);
-
 //echo $result;
+}
+if ($bewerking == "getKalForGeb") {
+$idGeb = 1;
+$t = "tblKalender";
+
+        $resultGeb = $conn -> query("SELECT GEB_KAL_ID FROM tblGebruiker where GEB_ID = $idGeb");
+        $returnGeb = getJsonObjFromResult($resultGeb);
+        mysqli_free_result($resultGeb);
+        $returnGebJson = json_decode($returnGeb, true);
+        //die($return);
+        $id = $returnGebJson["data"][0]["GEB_KAL_ID"];//kalender id
+        //var_dump($id);
+        // vraag de data op
+        $result = $conn -> query($id == null ? "SELECT * FROM $t" : "SELECT * FROM $t where KAL_ID = $id");
+
+        // maak van de inhoud van deze result een json object waarvan
+        // ook in android de juiste gegeventypes herkend worden
+        $return = getJsonObjFromResult($result);
+
+        // maak geheugenresources vrij :
+        mysqli_free_result($result);
+
+        die($return);
+}
    
 function getJsonObjFromResult(&$result){
     // de & voor de parameter zorgt er voor dat we de de parameter
