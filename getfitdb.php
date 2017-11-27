@@ -20,7 +20,7 @@ if ($bewerking == "getGeb") {
     //echo $result;
 }
 if ($bewerking == "getKalForGeb") {
-    //VRAAG KALENDER ID OP VOOR GEBRUIKER_ID
+    //VRAAG KALENDER ID OP VOOR GEBRUIKER_ID => MAX is 1 element
     $idGeb = 1;
     //$tblKalender = "tblKalender";
     $resultGeb = $conn->query("SELECT GEB_KAL_ID FROM tblGebruiker where GEB_ID = $idGeb");
@@ -29,7 +29,7 @@ if ($bewerking == "getKalForGeb") {
     $returnGebJson = json_decode($returnGeb, true); // json versie object
     //die($return);
     
-    //VRAAG KALENDER OP MET BEPAALD KAL_Kalender_ID
+    //VRAAG KALENDER OP MET BEPAALD KAL_Kalender_ID => MAX is 1 element
     $idKal = $returnGebJson["data"][0]["GEB_KAL_ID"]; // kalender id
     //$result = $conn->query($id == null ? "SELECT * FROM $tblKalender" : "SELECT * FROM $tblKalender where KAL_Kalender_ID = $id");
     $resultKal = $conn->query("SELECT * FROM tblKalender where KAL_Kalender_ID = $idKal");
@@ -37,20 +37,20 @@ if ($bewerking == "getKalForGeb") {
     mysqli_free_result($resultKal);// maak geheugenresources vrij :
     $returnKalJson = json_decode($returnKal, true); // json versie object
     
-    //VRAAG NAAM OP VAN ROUTINE UIT KALENDER , KAL_ROU_ID
+    //VRAAG NAAM OP VAN ROUTINE UIT KALENDER , KAL_ROU_ID => MAX is 1 element (verwijderen als aangepast ?)
     $idRou = $returnGebJson["data"][0]["GEB_KAL_ID"]; // kalender id
     $resultRou = $conn->query("SELECT * FROM tblRoutine where ROU_ID = $idRou");
     $returnRou = getJsonObjFromResult($resultRou);
     mysqli_free_result($resultRou);//maak geheugenresources vrij
     
-    //VRAAG ITEM OP VAN ROUTINE UIT KALENDER , KAL_ROU_ID
+    //VRAAG ITEM OP VAN ROUTINE UIT KALENDER , KAL_ROU_ID => MAX is MEERDERE elementen ! lijst
     $idRou = $returnGebJson["data"][0]["GEB_KAL_ID"]; // kalender id
     $resultRit = $conn->query("SELECT * FROM tblRoutineItem where RIT_ROU_ID = $idRou");
     $returnRit = getJsonObjFromResult($resultRit);
     mysqli_free_result($resultRit);//maak geheugenresources vrij
     $returnRitJson = json_decode($returnRit, true); // json versie object
     
-    //VRAAG OEFENING OP VAN ROUTINE ITEM
+    //VRAAG OEFENING OP VAN ROUTINE ITEM => MAX is 1 element
     $idOef = $returnRitJson["data"][0]["RIT_OEF_ID"]; // kalender id
     $resultOef = $conn->query("SELECT * FROM tblOefening where OEF_ID = $idOef");
     $returnOef = getJsonObjFromResult($resultOef);
