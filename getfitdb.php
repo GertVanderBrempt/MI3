@@ -1,4 +1,5 @@
 <?php
+//http://getfit.getenjoyment.net/getfitdb.php
     $servername = "fdb13.awardspace.net"; // de servernaam die je van je hosting firma hebt ontvangen
     $serverpoort = "3306"; //poort
     $username   = "2518084_getfit"; // de gebruikersnaam die je van je hosting firma hebt ontvangen
