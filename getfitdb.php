@@ -1,5 +1,5 @@
 <?php
-//http://getfit.getenjoyment.net/getfitdb.php?bewerking=selGEB
+//http://getfit.getenjoyment.net/getfitdb.php?bewerking=getKalForGeb
 $servername  = "fdb13.awardspace.net"; // de servernaam die je van je hosting firma hebt ontvangen
 $serverpoort = "3306"; //poort
 $username    = "2518084_getfit"; // de gebruikersnaam die je van je hosting firma hebt ontvangen
@@ -50,13 +50,19 @@ if ($bewerking == "getKalForGeb") {
     mysqli_free_result($resultRit);//maak geheugenresources vrij
     $returnRitJson = json_decode($returnRit, true); // json versie object
     
+    $oefeningen = [];
     //VRAAG OEFENING OP VAN ROUTINE ITEM => MAX is 1 element
-    $idOef = $returnRitJson["data"][0]["RIT_OEF_ID"]; // kalender id
+    foreach($returnRitJson["data"] as $oef){
+    $idOef = $oef["RIT_OEF_ID"]; // oef id
     $resultOef = $conn->query("SELECT * FROM tblOefening where OEF_ID = $idOef");
     $returnOef = getJsonObjFromResult($resultOef);
     mysqli_free_result($resultOef);//maak geheugenresources vrij
+    $returnOefJson = json_decode($returnOef, true); // json versie object
+    array_push($oefeningen, $returnOefJson["data"]);
+    }
     
-    die($returnOef);
+    //die($returnOef);
+    echo '{"data":' . json_encode($oefeningen) . '}';
 }
 
 function getJsonObjFromResult(&$result)
