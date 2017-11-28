@@ -62,7 +62,8 @@ if ($bewerking == "getKalForGeb") {
     }
     
     //die($returnOef);
-    echo '{"data":' . json_encode($oefeningen) . '}';
+    $oefeningenJson = '{"oefeningen":' . json_encode($oefeningen) . '}';
+    die($oefeningenJson);
 }
 
 function getJsonObjFromResult(&$result)
