@@ -26,8 +26,8 @@ $bewerking = $postvars["bewerking"];
 //-addGeb
 $GEB_Voornaam    = $postvars['GEB_Voornaam'];
 $GEB_Familienaam = $postvars['GEB_Familienaam'];
-$GEB_Email       = $postvars['GEB_Email'];
-$GEB_Wachtwoord  = $postvars['GEB_Wachtwoord'];
+$GEB_Email       = $postvars['GEB_Email'];       //-checkLogin
+$GEB_Wachtwoord  = $postvars['GEB_Wachtwoord'];  //-checkLogin
 //-addRou
 $ROU_Naam   = $_POST['ROU_Naam'];
 $ROU_GEB_ID = $_POST['ROU_GEB_ID'];
@@ -47,6 +47,13 @@ if (isset($_POST['GEB_Voornaam']) &&
     //zet waardes in variabelen
     $GEB_Voornaam = $_POST['GEB_Voornaam'];
     $GEB_Familienaam = $_POST['GEB_Familienaam'];
+    $GEB_Email = $_POST['GEB_Email'];
+    $GEB_Wachtwoord = $_POST['GEB_Wachtwoord'];
+}
+//-checkLogin
+if (isset($_POST['GEB_Email'])&& 
+    isset($_POST['GEB_Wachtwoord'])) {
+    //zet waardes in variabelen
     $GEB_Email = $_POST['GEB_Email'];
     $GEB_Wachtwoord = $_POST['GEB_Wachtwoord'];
 }
@@ -81,6 +88,13 @@ if (isset($_GET['GEB_Voornaam']) &&
     $GEB_Email = $_GET['GEB_Email'];
     $GEB_Wachtwoord = $_GET['GEB_Wachtwoord'];
 }
+//-checkLogin
+if (isset($_GET['GEB_Email'])&& 
+    isset($_GET['GEB_Wachtwoord'])) {
+    //zet waardes in variabelen
+    $GEB_Email = $_GET['GEB_Email'];
+    $GEB_Wachtwoord = $_GET['GEB_Wachtwoord'];
+}
 //-addRou
 if (isset($_GET['ROU_Naam']) && 
     isset($_GET['ROU_GEB_ID'])){
@@ -108,6 +122,19 @@ if ($bewerking == "getGeb") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
     $result = $conn->query("SELECT * FROM tblGebruiker");
     $return = getJsonObjFromResult($result);// maakt van de inhoud van deze result een json object waarvan ook in android de juiste gegeventypes herkend worden
     mysqli_free_result($result);//maak geheugenresources vrij
+    die($return);
+}
+if ($bewerking == "checkLogin") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
+    $result = $conn->query("SELECT GEB_Email, GEB_Wachtwoord FROM tblGebruiker where GEB_Email = $GEB_EMAIL");
+    $return = getJsonObjFromResult($result);// maakt van de inhoud van deze result een json object waarvan ook in android de juiste gegeventypes herkend worden
+    mysqli_free_result($result);//maak geheugenresources vrij
+    $returnLoginJson = json_decode($return, true); // json versie object
+    $wachtwoord = $returnLoginJson["data"][0]["GEB_Wachtwoord"];
+    if ($wachtwoord == $GEB_Wachtwoord ) {
+        die(json_encode("login successfully"));
+    } else {
+        die(json_encode("login failed"));
+    }
     die($return);
 }
 
