@@ -15,7 +15,74 @@ $dbname      = "2518084_getfit"; // de naam van de database
 // MAAK EEN CONNECTIE MET DE DATABASE
 $conn = mysqli_connect($servername, $username, $password, $dbname, $serverpoort) or die(mysqli_connect_error());
 
-$bewerking = $_GET['bewerking'];
+// POST(GET) code
+
+// POSTvars voor volley in native Android
+$body = file_get_contents('php://input');
+$postvars = json_decode($body, true);
+
+$bewerking = $postvars["bewerking"];
+//nodig voor api functies
+//-addGeb
+$GEB_Voornaam    = $postvars['GEB_Voornaam'];
+$GEB_Familienaam = $postvars['GEB_Familienaam'];
+$GEB_Email       = $postvars['GEB_Email'];
+$GEB_Wachtwoord  = $postvars['GEB_Wachtwoord'];
+//-addRou
+$ROU_Naam   = $_POST['ROU_Naam'];
+$ROU_GEB_ID = $_POST['ROU_GEB_ID'];
+
+// POST voor ajax
+if(isset($_POST['bewerking'])){
+    $bewerking = $_POST['bewerking'];
+}
+//nodig voor api functies
+//-addGeb
+if (isset($_POST['GEB_Voornaam']) && 
+    isset($_POST['GEB_Familienaam'])&& 
+    isset($_POST['GEB_Email'])&& 
+    isset($_POST['GEB_Wachtwoord'])) {
+    //zet waardes in variabelen
+    $GEB_Voornaam = $_POST['GEB_Voornaam'];
+    $GEB_Familienaam = $_POST['GEB_Familienaam'];
+    $GEB_Email = $_POST['GEB_Email'];
+    $GEB_Wachtwoord = $_POST['GEB_Wachtwoord'];
+}
+//-addRou
+if (isset($_POST['ROU_Naam']) && 
+    isset($_POST['ROU_GEB_ID'])){
+	//zet waardes in variabelen
+    $ROU_Naam = $_POST['ROU_Naam'];
+    $ROU_GEB_ID = $_POST['ROU_GEB_ID'];
+} 
+
+// GET voor tests 
+//if($bewerking == null || $bewerking == ''){
+	if(isset($_GET['bewerking'])){
+    	$bewerking = $_GET['bewerking'];
+	}
+//}
+//nodig voor api functies
+//-addGeb
+if (isset($_GET['GEB_Voornaam']) && 
+    isset($_GET['GEB_Familienaam'])&& 
+    isset($_GET['GEB_Email'])&& 
+    isset($_GET['GEB_Wachtwoord'])) {
+    //zet waardes in variabelen
+    $GEB_Voornaam = $_GET['GEB_Voornaam'];
+    $GEB_Familienaam = $_GET['GEB_Familienaam'];
+    $GEB_Email = $_GET['GEB_Email'];
+    $GEB_Wachtwoord = $_GET['GEB_Wachtwoord'];
+}
+//-addRou
+if (isset($_GET['ROU_Naam']) && 
+    isset($_GET['ROU_GEB_ID'])){
+	//zet waardes in variabelen
+    $ROU_Naam = $_GET['ROU_Naam'];
+    $ROU_GEB_ID = $_GET['ROU_GEB_ID'];
+} 
+
+// API FUNCTIES
 
 if ($bewerking == "getGeb") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
     $result = $conn->query("SELECT * FROM tblGebruiker");
@@ -25,43 +92,28 @@ if ($bewerking == "getGeb") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
 }
 
 if ($bewerking == "addGeb") { // MAAK EEN GEBRUIKER AAN : registeer
-        /*if (isset($_POST['GEB_Voornaam']) && 
-            isset($_POST['GEB_Familienaam'])&& 
-            isset($_POST['GEB_Email'])&& 
-            isset($_POST['GEB_Wachtwoord'])) {*/
-        if (isset($_GET['GEB_Voornaam']) && 
-            isset($_GET['GEB_Familienaam'])&& 
-            isset($_GET['GEB_Email'])&& 
-            isset($_GET['GEB_Wachtwoord'])) {
-            // Controle om o.a. SQL injection te voorkomen.
-            //GET
-            $GEB_Voornaam = $_GET['GEB_Voornaam'];
-            $GEB_Familienaam = $_GET['GEB_Familienaam'];
-            $GEB_Email = $_GET['GEB_Email'];
-            $GEB_Wachtwoord = $_GET['GEB_Wachtwoord'];
-            //POST
-            //$GEB_Voornaam = $_POST['GEB_Voornaam'];
-            //$GEB_Familienaam = $_POST['GEB_Familienaam'];
-            //$GEB_Email = $_POST['GEB_Email'];
-            //$GEB_Wachtwoord = $_POST['GEB_Wachtwoord'];
-        } else {
-            die(json_encode("missing data"));
-        }
+    if ($GEB_Voornaam && 
+        $GEB_Familienaam && 
+        $GEB_Email && 
+        $GEB_Wachtwoord )) {
+        // Controle om o.a. SQL injection te voorkomen.
+    } else {
+        die(json_encode("missing data"));
+    }
 
        
-        if ($conn -> query("insert into tblGebruiker (GEB_Voornaam, GEB_Familienaam, GEB_Email, GEB_Wachtwoord) values('"
+    if ($conn -> query("insert into tblGebruiker (GEB_Voornaam, GEB_Familienaam, GEB_Email, GEB_Wachtwoord) values('"
         .$GEB_Voornaam."','".$GEB_Familienaam."','".$GEB_Email."','".$GEB_Wachtwoord."')") === TRUE) { // into $t
-            die(json_encode("Record added successfully"));
-        } else {
-            die(json_encode("Error adding record: " . $conn -> error));
-        }
+        die(json_encode("Record added successfully"));
+    } else {
+        die(json_encode("Error adding record: " . $conn -> error));
+    }
 }
 
 if ($bewerking == "addRou") { //MAAK EEN ROUTINE AAN (MET NAAM) (VOOR GEBRUIKER)
-    if (isset($_GET['ROU_Naam']) && 
-        isset($_GET['ROU_GEB_ID'])){
-        $ROU_Naam = $_GET['ROU_Naam'];
-        $ROU_GEB_ID = $_GET['ROU_GEB_ID'];
+    if ($ROU_Naam && 
+        $ROU_GEB_ID){
+        // Controle om o.a. SQL injection te voorkomen.
     } else {
         die(json_encode("missing data"));
     }
