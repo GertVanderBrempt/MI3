@@ -152,7 +152,7 @@ if ($bewerking == "delRou") { //VERWIJDER EEN ROUTINE
     } else {
         die(json_encode("missing data"));
     }
-    if ($conn -> query("delete FROM tblRoutine where PR_ID = $id") === TRUE) { // FROM $t
+    if ($conn -> query("delete FROM tblRoutine where ROU_ID = $id") === TRUE) { // FROM $t
         die(json_encode("Record deleted successfully"));
     } else {
         die(json_encode("Error deleting record: " . $conn -> error));
