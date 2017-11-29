@@ -3,7 +3,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
 header('Access-Control-Max-Age: 1000');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-
+//header('Content-Type: application/json');
 //http://getfit.getenjoyment.net/getfitdb.php?bewerking=getKalForGeb
 
 $servername  = "fdb13.awardspace.net"; // de servernaam  van de host
@@ -108,7 +108,7 @@ if ($bewerking == "getGeb") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
     $result = $conn->query("SELECT * FROM tblGebruiker");
     $return = getJsonObjFromResult($result);// maakt van de inhoud van deze result een json object waarvan ook in android de juiste gegeventypes herkend worden
     mysqli_free_result($result);//maak geheugenresources vrij
-    die($return);//echo $result;
+    die($return);
 }
 
 if ($bewerking == "addGeb") { // MAAK EEN GEBRUIKER AAN : registeer
