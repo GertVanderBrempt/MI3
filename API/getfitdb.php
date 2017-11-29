@@ -95,7 +95,7 @@ if ($bewerking == "addGeb") { // MAAK EEN GEBRUIKER AAN : registeer
     if ($GEB_Voornaam && 
         $GEB_Familienaam && 
         $GEB_Email && 
-        $GEB_Wachtwoord )) {
+        $GEB_Wachtwoord ) {
         // Controle om o.a. SQL injection te voorkomen.
     } else {
         die(json_encode("missing data"));
