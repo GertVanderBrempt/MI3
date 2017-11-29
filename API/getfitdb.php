@@ -58,6 +58,27 @@ if ($bewerking == "addGeb") {
             die(json_encode("Error adding record: " . $conn -> error));
         }
 }
+if ($bewerking == "addRou") {
+    if (isset($_GET['ROU_Naam']) && 
+        isset($_GET['ROU_GEB_ID'])){
+        $ROU_Naam = $_GET['ROU_Naam'];
+        $ROU_GEB_ID = $_GET['ROU_GEB_ID'];
+    } else {
+        die(json_encode("missing data"));
+    }
+    
+    if ($conn -> query("insert into tblRoutine (ROU_Naam, ROU_GEB_ID) values('"
+        .$ROU_Naam."','".$ROU_GEB_ID."')") === TRUE) { // into $t
+        $resultGeb = $conn->query("SELECT * FROM tblGebruiker where GEB_ID = $ROU_GEB_ID");
+        $returnGeb = getJsonObjFromResult($resultGeb);
+        mysqli_free_result($resultGeb);// maak geheugenresources vrij :
+        $returnGebJson = json_decode($returnGeb, true); // json versie object
+        $naamGeb = $returnGebJson["data"][0]["GEB_Voornaam"];
+        die(json_encode("Record added successfully for $naamGeb"));
+    } else {
+        die(json_encode("Error adding record: " . $conn -> error));
+    }
+}
 if ($bewerking == "getKalForGeb") {
     $idGeb = 1;//GEBRUIKER ID = KALENDER ID
     
