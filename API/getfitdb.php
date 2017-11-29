@@ -1,9 +1,4 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
-header('Access-Control-Max-Age: 1000');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-
 //http://getfit.getenjoyment.net/getfitdb.php?bewerking=getKalForGeb
 $servername  = "fdb13.awardspace.net"; // de servernaam die je van je hosting firma hebt ontvangen
 $serverpoort = "3306"; //poort
@@ -24,57 +19,32 @@ if ($bewerking == "getGeb") {
     die($return);
     //echo $result;
 }
-if ($bewerking == "addGeb") {
-        /*if (isset($_POST['GEB_Voornaam']) && 
-            isset($_POST['GEB_Familienaam'])&& 
-            isset($_POST['GEB_Email'])&& 
-            isset($_POST['GEB_Wachtwoord'])) {*/
-        if (isset($_GET['GEB_Voornaam']) && 
-            isset($_GET['GEB_Familienaam'])&& 
-            isset($_GET['GEB_Email'])&& 
-            isset($_GET['GEB_Wachtwoord'])) {
-            // Controle om o.a. SQL injection te voorkomen.
-            //GET
-            $GEB_Voornaam = $_GET['GEB_Voornaam'];
-            $GEB_Familienaam = $_GET['GEB_Familienaam'];
-            $GEB_Email = $_GET['GEB_Email'];
-            $GEB_Wachtwoord = $_GET['GEB_Wachtwoord'];
-            //POST
-            //$GEB_Voornaam = $_POST['GEB_Voornaam'];
-            //$GEB_Familienaam = $_POST['GEB_Familienaam'];
-            //$GEB_Email = $_POST['GEB_Email'];
-            //$GEB_Wachtwoord = $_POST['GEB_Wachtwoord'];
-        } else {
-            die(json_encode("missing data"));
-        }
-
-        // product toevoegen
-
-       
-        if ($conn -> query("insert into tblGebruiker (GEB_Voornaam, GEB_Familienaam, GEB_Email, GEB_Wachtwoord) values('"
-        .$GEB_Voornaam."','".$GEB_Familienaam."','".$GEB_Email."','".$GEB_Wachtwoord."')") === TRUE) { // into $t
-            die(json_encode("Record added successfully"));
-        } else {
-            die(json_encode("Error adding record: " . $conn -> error));
-        }
-}
 if ($bewerking == "getKalForGeb") {
-    $idGeb = 1;//GEBRUIKER ID = KALENDER ID
+    //VRAAG KALENDER ID OP VOOR GEBRUIKER_ID => MAX is 1 element
+    $idGeb = 1;
+    //$tblKalender = "tblKalender";
+    $resultGeb = $conn->query("SELECT GEB_KAL_ID FROM tblGebruiker where GEB_ID = $idGeb");
+    $returnGeb = getJsonObjFromResult($resultGeb);
+    mysqli_free_result($resultGeb);//maak geheugenresources vrij
+    $returnGebJson = json_decode($returnGeb, true); // json versie object
+    //die($return);
     
-    //VRAAG KALENDER ITEMS OP MET BEGRUIKER ID
-    $resultKit = $conn->query("SELECT * FROM tblKalenderItem where KIT_GEB_ID = $idGeb");
-    $returnKit = getJsonObjFromResult($resultKit);
-    mysqli_free_result($resultKit);// maak geheugenresources vrij :
-    $returnKitJson = json_decode($returnKit, true); // json versie object
+    //VRAAG KALENDER OP MET BEPAALD KAL_Kalender_ID => MAX is 1 element
+    $idKal = $returnGebJson["data"][0]["GEB_KAL_ID"]; // kalender id
+    //$result = $conn->query($id == null ? "SELECT * FROM $tblKalender" : "SELECT * FROM $tblKalender where KAL_Kalender_ID = $id");
+    $resultKal = $conn->query("SELECT * FROM tblKalender where KAL_Kalender_ID = $idKal");
+    $returnKal = getJsonObjFromResult($resultKal);
+    mysqli_free_result($resultKal);// maak geheugenresources vrij :
+    $returnKalJson = json_decode($returnKal, true); // json versie object
     
     //VRAAG NAAM OP VAN ROUTINE UIT KALENDER , KAL_ROU_ID => MAX is 1 element (verwijderen als aangepast ?)
-    $idRou = $returnKitJson["data"][0]["KIT_ROU_ID"]; // routine id
+    $idRou = $returnGebJson["data"][0]["GEB_KAL_ID"]; // kalender id
     $resultRou = $conn->query("SELECT * FROM tblRoutine where ROU_ID = $idRou");
     $returnRou = getJsonObjFromResult($resultRou);
     mysqli_free_result($resultRou);//maak geheugenresources vrij
     
     //VRAAG ITEM OP VAN ROUTINE UIT KALENDER , KAL_ROU_ID => MAX is MEERDERE elementen ! lijst
-    $idRou = $returnKitJson["data"][0]["KIT_ROU_ID"]; // routine id
+    $idRou = $returnGebJson["data"][0]["GEB_KAL_ID"]; // kalender id
     $resultRit = $conn->query("SELECT * FROM tblRoutineItem where RIT_ROU_ID = $idRou");
     $returnRit = getJsonObjFromResult($resultRit);
     mysqli_free_result($resultRit);//maak geheugenresources vrij
