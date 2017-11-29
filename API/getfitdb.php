@@ -69,11 +69,14 @@ if ($bewerking == "addRou") {
     
     if ($conn -> query("insert into tblRoutine (ROU_Naam, ROU_GEB_ID) values('"
         .$ROU_Naam."','".$ROU_GEB_ID."')") === TRUE) { // into $t
+
+    	//CHECK LINK MET GEBRUIKER ID : TOON VOOR WELKE GEBRUIKER HET IS TOEGEVOEGD
         $resultGeb = $conn->query("SELECT * FROM tblGebruiker where GEB_ID = $ROU_GEB_ID");
         $returnGeb = getJsonObjFromResult($resultGeb);
         mysqli_free_result($resultGeb);// maak geheugenresources vrij :
         $returnGebJson = json_decode($returnGeb, true); // json versie object
         $naamGeb = $returnGebJson["data"][0]["GEB_Voornaam"];
+
         die(json_encode("Record added successfully for $naamGeb"));
     } else {
         die(json_encode("Error adding record: " . $conn -> error));
