@@ -5,26 +5,26 @@ header('Access-Control-Max-Age: 1000');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 
 //http://getfit.getenjoyment.net/getfitdb.php?bewerking=getKalForGeb
-$servername  = "fdb13.awardspace.net"; // de servernaam die je van je hosting firma hebt ontvangen
-$serverpoort = "3306"; //poort
-$username    = "2518084_getfit"; // de gebruikersnaam die je van je hosting firma hebt ontvangen
-$password    = "getfit2017"; // het paswoord dat je van je hosting firma hebt ontvangen
-$dbname      = "2518084_getfit"; // de naam van de databank die je van je hosting firma hebt ontvangen
 
-// Create connection
+$servername  = "fdb13.awardspace.net"; // de servernaam  van de host
+$serverpoort = "3306";                 // de serverpoort van de host
+$username    = "2518084_getfit"; // de gebruikersnaam voor de database
+$password    = "getfit2017";     // het paswoord      voor de database
+$dbname      = "2518084_getfit"; // de naam van de database
+
+// MAAK EEN CONNECTIE MET DE DATABASE
 $conn = mysqli_connect($servername, $username, $password, $dbname, $serverpoort) or die(mysqli_connect_error());
 
 $bewerking = $_GET['bewerking'];
-if ($bewerking == "getGeb") {
+
+if ($bewerking == "getGeb") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
     $result = $conn->query("SELECT * FROM tblGebruiker");
-    // maak van de inhoud van deze result een json object waarvan
-    // ook in android de juiste gegeventypes herkend worden
-    $return = getJsonObjFromResult($result);
+    $return = getJsonObjFromResult($result);// maakt van de inhoud van deze result een json object waarvan ook in android de juiste gegeventypes herkend worden
     mysqli_free_result($result);//maak geheugenresources vrij
-    die($return);
-    //echo $result;
+    die($return);//echo $result;
 }
-if ($bewerking == "addGeb") {
+
+if ($bewerking == "addGeb") { // MAAK EEN GEBRUIKER AAN : registeer
         /*if (isset($_POST['GEB_Voornaam']) && 
             isset($_POST['GEB_Familienaam'])&& 
             isset($_POST['GEB_Email'])&& 
@@ -48,8 +48,6 @@ if ($bewerking == "addGeb") {
             die(json_encode("missing data"));
         }
 
-        // product toevoegen
-
        
         if ($conn -> query("insert into tblGebruiker (GEB_Voornaam, GEB_Familienaam, GEB_Email, GEB_Wachtwoord) values('"
         .$GEB_Voornaam."','".$GEB_Familienaam."','".$GEB_Email."','".$GEB_Wachtwoord."')") === TRUE) { // into $t
@@ -58,7 +56,8 @@ if ($bewerking == "addGeb") {
             die(json_encode("Error adding record: " . $conn -> error));
         }
 }
-if ($bewerking == "addRou") {
+
+if ($bewerking == "addRou") { //MAAK EEN ROUTINE AAN (MET NAAM) (VOOR GEBRUIKER)
     if (isset($_GET['ROU_Naam']) && 
         isset($_GET['ROU_GEB_ID'])){
         $ROU_Naam = $_GET['ROU_Naam'];
@@ -82,6 +81,7 @@ if ($bewerking == "addRou") {
         die(json_encode("Error adding record: " . $conn -> error));
     }
 }
+
 if ($bewerking == "getKalForGeb") {
     $idGeb = 1;//GEBRUIKER ID = KALENDER ID
     
