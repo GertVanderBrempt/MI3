@@ -165,7 +165,7 @@ if ($bewerking == "getKalForGeb") {
     //VRAAG KALENDER ITEMS OP MET BEGRUIKER ID
     $resultKit = $conn->query("SELECT * FROM tblKalenderItem where KIT_GEB_ID = $idGeb");
     $returnKit = getJsonObjFromResult($resultKit);
-    mysqli_free_result($resultKit);// maak geheugenresources vrij :
+    mysqli_free_result($resultKit);// maak geheugenresources vrij
     $returnKitJson = json_decode($returnKit, true); // json versie object
     
     //VRAAG NAAM OP VAN ROUTINE UIT KALENDER , KAL_ROU_ID => MAX is 1 element (verwijderen als aangepast ?)
