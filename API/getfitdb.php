@@ -93,7 +93,15 @@ if (isset($_GET['ROU_ID'])){
 	//zet waardes in variabelen
     $ROU_ID = $_GET['ROU_ID'];
 } 
-
+// log connectie in db
+/*$logdata = "postvars:".var_dump($postvars);
+$logdata .= " / ip:".$_SERVER['REMOTE_ADDR'];
+$logdata .= " / url:".$_SERVER['REQUEST_URI'];
+$logdata .= " / time:".time();
+$resultConn = $conn -> query("insert into tblConnectie (CON_DATA) values('".$logdata."')");
+$returnConn = getJsonObjFromResult($resultConn);
+mysqli_free_result($resultConn);//maak geheugenresources vrij
+*/
 // API FUNCTIES
 
 if ($bewerking == "getGeb") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
