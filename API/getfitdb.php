@@ -31,6 +31,8 @@ $GEB_Wachtwoord  = $postvars['GEB_Wachtwoord'];
 //-addRou
 $ROU_Naam   = $_POST['ROU_Naam'];
 $ROU_GEB_ID = $_POST['ROU_GEB_ID'];
+//-delRou
+$ROU_ID   = $_POST['ROU_ID'];
 
 // POST voor ajax
 if(isset($_POST['bewerking'])){
@@ -54,6 +56,11 @@ if (isset($_POST['ROU_Naam']) &&
 	//zet waardes in variabelen
     $ROU_Naam = $_POST['ROU_Naam'];
     $ROU_GEB_ID = $_POST['ROU_GEB_ID'];
+} 
+//-delRou
+if (isset($_POST['ROU_ID'])){
+	//zet waardes in variabelen
+    $ROU_ID = $_POST['ROU_ID'];
 } 
 
 // GET voor tests 
@@ -80,6 +87,11 @@ if (isset($_GET['ROU_Naam']) &&
 	//zet waardes in variabelen
     $ROU_Naam = $_GET['ROU_Naam'];
     $ROU_GEB_ID = $_GET['ROU_GEB_ID'];
+} 
+//-delRou
+if (isset($_GET['ROU_ID'])){
+	//zet waardes in variabelen
+    $ROU_ID = $_GET['ROU_ID'];
 } 
 
 // API FUNCTIES
@@ -121,16 +133,29 @@ if ($bewerking == "addRou") { //MAAK EEN ROUTINE AAN (MET NAAM) (VOOR GEBRUIKER)
     if ($conn -> query("insert into tblRoutine (ROU_Naam, ROU_GEB_ID) values('"
         .$ROU_Naam."','".$ROU_GEB_ID."')") === TRUE) { // into $t
 
-    	//CHECK LINK MET GEBRUIKER ID : TOON VOOR WELKE GEBRUIKER HET IS TOEGEVOEGD
+    	//CHECK LINK MET GEBRUIKER ID : TOON VOOR WELKE GEBRUIKER DE ROUTINE IS TOEGEVOEGD
         $resultGeb = $conn->query("SELECT * FROM tblGebruiker where GEB_ID = $ROU_GEB_ID");
         $returnGeb = getJsonObjFromResult($resultGeb);
-        mysqli_free_result($resultGeb);// maak geheugenresources vrij :
+        mysqli_free_result($resultGeb); // maak geheugenresources vrij
         $returnGebJson = json_decode($returnGeb, true); // json versie object
         $naamGeb = $returnGebJson["data"][0]["GEB_Voornaam"];
 
         die(json_encode("Record added successfully for $naamGeb"));
     } else {
         die(json_encode("Error adding record: " . $conn -> error));
+    }
+}
+
+if ($bewerking == "delRou") { //VERWIJDER EEN ROUTINE
+    if ($ROU_ID){
+        // Controle om o.a. SQL injection te voorkomen.
+    } else {
+        die(json_encode("missing data"));
+    }
+    if ($conn -> query("delete FROM tblRoutine where PR_ID = $id") === TRUE) { // FROM $t
+        die(json_encode("Record deleted successfully"));
+    } else {
+        die(json_encode("Error deleting record: " . $conn -> error));
     }
 }
 
