@@ -124,7 +124,7 @@ if ($bewerking == "getGeb") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
     mysqli_free_result($result);//maak geheugenresources vrij
     die($return);
 }
-if ($bewerking == "checkLogin") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
+if ($bewerking == "checkLogin") { //KIJK NA OF LOGIN INFO CORRECT IS
     $result = $conn->query("SELECT GEB_Email, GEB_Wachtwoord FROM tblGebruiker where GEB_Email = $GEB_EMAIL");
     $return = getJsonObjFromResult($result);// maakt van de inhoud van deze result een json object waarvan ook in android de juiste gegeventypes herkend worden
     mysqli_free_result($result);//maak geheugenresources vrij
