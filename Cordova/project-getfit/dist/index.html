@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,68 +13,75 @@
     <link rel="stylesheet" href="css/framework7-icons.css">
     <!-- Path to your custom app styles-->
     <link rel="stylesheet" href="css/my-app.css">
-      <!-- -->
-      <link rel="stylesheet" href="fonts/framework7-icons.css">
-  </head>
-  <body>
+    <!-- Voor md5 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
+</head>
+
+<body>
     <!-- Status bar overlay for fullscreen mode-->
     <div class="statusbar-overlay"></div>
     <!-- Panels overlay-->
     <div class="panel-overlay"></div>
     <!-- Left panel with reveal effect-->
     <div class="panel panel-left panel-reveal">
-      <div class="content-block">
-        <p>Left panel content goes here</p>
-      </div>
+        <div class="content-block">
+            <p>Left panel content goes here</p>
+        </div>
     </div>
     <!-- Right panel with cover effect-->
     <div class="panel panel-right panel-cover">
-      <div class="content-block">
-        <p>Right panel content goes here</p>
-      </div>
+        <div class="content-block">
+            <p>Right panel content goes here</p>
+        </div>
     </div>
     <!-- Views-->
     <div class="views">
-      <!-- Your main view, should have "view-main" class-->
-      <div class="view view-main">
-        <!-- Top Navbar-->
-        <div class="navbar">
-          <div class="navbar-inner">
-            <!-- We have home navbar without left link-->
-            <div class="center sliding">Get Fit App</div>
-          </div>
-        </div>
-        <!-- Pages, because we need fixed-through navbar and toolbar, it has additional appropriate classes-->
-        <div class="pages navbar-through toolbar-through">
-          <!-- Page, data-page contains page name-->
-          <div data-page="index" class="page">
-            <!-- Scrollable page content-->
-            <div class="page-content">
-              <div class="content-block-title">Welkom bij onze app</div>
-              <div class="content-block">
-                <div class="content-block-inner">
-                  <p>In onze (sport) app kan je zelf je (week)schema kan samenstellen uit routines.</p>
-                  <p>Deze routines bevatten oefeningen, zelf kan je ook oefeningen/routines aanmaken of je kan er gewoon gebruiken van andere en hopelijk nog meer extra functies</p>
+        <!-- Your main view, should have "view-main" class-->
+        <div class="view view-main">
+            <!-- Top Navbar-->
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <!-- We have home navbar without left link-->
+                    <div class="center sliding">Get Fit App</div>
                 </div>
-              </div>
-              <div class="content-block-title">Login of registreer om te starten</div>
-                <div class="list-block inset">
-                <ul>
-                  <li><a href="login.html" class="item-link">
-                      <div class="item-content">
-                        <div class="item-inner"> 
-                          <div class="item-title">Login</div>
+            </div>
+            <!-- Pages, because we need fixed-through navbar and toolbar, it has additional appropriate classes-->
+            <div class="pages navbar-through toolbar-through">
+                <!-- Page, data-page contains page name-->
+                <div data-page="index" class="page">
+                    <!-- Scrollable page content-->
+                    <div class="page-content">
+                        <div class="content-block-title">Welkom bij onze app</div>
+                        <div class="content-block">
+                            <div class="content-block-inner">
+                                <p>In onze (sport) app kan je zelf je (week)schema kan samenstellen uit routines.</p>
+                                <p>Deze routines bevatten oefeningen, zelf kan je ook oefeningen/routines aanmaken of je kan er gewoon gebruiken van andere en hopelijk nog meer extra functies</p>
+                            </div>
                         </div>
-                      </div></a></li>
-                  <li><a href="registreer.html" class="item-link">
-                      <div class="item-content"> 
-                        <div class="item-inner">
-                          <div class="item-title">Registreer</div>
+                        <div class="content-block-title">Login of registreer om te starten</div>
+                        <div class="list-block inset">
+                            <ul>
+                                <li>
+                                    <a href="login.html" class="item-link">
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">Login</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="registreer.html" class="item-link">
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title">Registreer</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
-                      </div></a></li>
-                </ul>
-              </div>
-              <!--
+                        <!--
               <div class="content-block-title">What about simple navigation?</div>
 <div class="list-block inset">
                 <ul>
@@ -91,54 +99,42 @@
                       </div></a></li>
                 </ul>
               </div>-->
-              <!--<div class="content-block-title">Side panels</div>
+                        <!--<div class="content-block-title">Side panels</div>
               <div class="content-block">
                 <div class="row">
                   <div class="col-50"><a href="#" data-panel="left" class="button open-panel">Left Panel</a></div>
                   <div class="col-50"><a href="#" data-panel="right" class="button open-panel">Right Panel</a></div>
                 </div>
-              </div>-->
+              </div>--></div>
+                </div>
             </div>
-          </div>
-        </div>
-        <!-- Bottom Toolbar-->
-        <!--<div class="toolbar">
+            <!-- Bottom Toolbar-->
+            <!--<div class="toolbar">
           <div class="toolbar-inner"><a href="#" class="link">Link 1</a><a href="#" class="link">Link 2</a></div>
         </div>-->
-          <div class="toolbar tabbar tabbar-labels">
-    <div class="toolbar-inner">
-        <a href="#tab1" class="tab-link active">
-            <i class="icon f7-icons">info_fill
+            <div class="toolbar tabbar tabbar-labels">
+                <div class="toolbar-inner">
+                    <a href="#tab1" class="tab-link active"> <i class="icon f7-icons">info_fill
                 <span class="badge bg-red">1</span>
-            </i>
-            <span class="tabbar-label">Info & login</span>
-        </a>
-        <a href="#tab2" class="tab-link">
-            <i class="icon f7-icons">home_fill
+            </i> <span class="tabbar-label">Info & login</span> </a>
+                    <a href="#tab2" class="tab-link"> <i class="icon f7-icons">home_fill
                 <span class="badge bg-red">1</span>
-            </i>
-            <span class="tabbar-label">Home</span>
-        </a>
-        <a href="#tab3" class="tab-link">
-            <i class="icon f7-icons">data_fill
+            </i> <span class="tabbar-label">Home</span> </a>
+                    <a href="#tab3" class="tab-link"> <i class="icon f7-icons">data_fill
                 <span class="badge bg-red">1</span>
-            </i>
-            <span class="tabbar-label">Kalender</span>
-        </a>
-        <a href="#tab4" class="tab-link">
-            <i class="icon f7-icons">compass_fill
+            </i> <span class="tabbar-label">Kalender</span> </a>
+                    <a href="#tab4" class="tab-link"> <i class="icon f7-icons">compass_fill
                 <span class="badge bg-red">1</span>
-            </i>
-            <span class="tabbar-label">Locaties</span>
-        </a>
-    </div>
-</div>
-      </div>
+            </i> <span class="tabbar-label">Locaties</span> </a>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Path to Framework7 Library JS-->
     <script type="text/javascript" src="js/framework7.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <!-- Path to your app js-->
     <script type="text/javascript" src="js/my-app.js"></script>
-  </body>
+</body>
+
 </html>

@@ -10,7 +10,7 @@
 </div>
 <div class="pages">
     <!-- Page, data-page contains page name-->
-    <div data-page="page1" class="page">
+    <div data-page="login" class="page">
         <!-- page-content has additional login-screen content -->
           <div class="page-content login-screen-content">
             <!-- Login form -->
@@ -21,7 +21,7 @@
                     <div class="item-inner">
                       <div class="item-title label">Email</div>
                       <div class="item-input">
-                        <input type="email" name="email" placeholder="vb. jan.janssens@gmail.com">
+                        <input class="gf-input-email" type="email" name="email" placeholder="vb. jan.janssens@gmail.com">
                       </div>
                     </div>
                   </li>
@@ -29,7 +29,7 @@
                     <div class="item-inner">
                       <div class="item-title label">Wachtwoord</div>
                       <div class="item-input">
-                        <input type="password" name="password" placeholder="(hidden)">
+                        <input class="gf-input-wachtwoord" type="password" name="password" placeholder="(hidden)">
                       </div>
                     </div>
                   </li>
@@ -38,10 +38,10 @@
               <div class="list-block">
                 <ul>
                   <li>
-                    <a href="#" class="item-link list-button">Login</a>
+                    <a href="#" class="item-link list-button gf-btn-login-gebruiker">Login</a>
                   </li>
                 </ul>
-                <div class="list-block-label">tekst voor wanneer het mis gaat</div>
+                <div class="list-block-label gf-txt-warning">tekst voor wanneer het mis gaat</div>
               </div>
             </form>
           </div>
