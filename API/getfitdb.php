@@ -125,17 +125,16 @@ if ($bewerking == "getGeb") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
     die($return);
 }
 if ($bewerking == "checkLogin") { //KIJK NA OF LOGIN INFO CORRECT IS
-    $result = $conn->query("SELECT GEB_Email, GEB_Wachtwoord FROM tblGebruiker where GEB_Email = $GEB_EMAIL");
+    $result = $conn->query("SELECT GEB_Wachtwoord, GEB_Voornaam FROM tblGebruiker WHERE GEB_Email = '$GEB_Email'");
     $return = getJsonObjFromResult($result);// maakt van de inhoud van deze result een json object waarvan ook in android de juiste gegeventypes herkend worden
     mysqli_free_result($result);//maak geheugenresources vrij
     $returnLoginJson = json_decode($return, true); // json versie object
     $wachtwoord = $returnLoginJson["data"][0]["GEB_Wachtwoord"];
     if ($wachtwoord == $GEB_Wachtwoord ) {
-        die(json_encode("login successfully"));
+        die($return);
     } else {
-        die(json_encode("login failed"));
+        die(addJsonData("400","login failed."));
     }
-    die($return);
 }
 
 if ($bewerking == "addGeb") { // MAAK EEN GEBRUIKER AAN : registeer
@@ -145,15 +144,15 @@ if ($bewerking == "addGeb") { // MAAK EEN GEBRUIKER AAN : registeer
         $GEB_Wachtwoord ) {
         // Controle om o.a. SQL injection te voorkomen.
     } else {
-        die(json_encode("missing data"));
+        die(addJsonData("400","niet alle velden werden ingevuld."));//json_encode("missing data"));
     }
 
        
-    if ($conn -> query("insert into tblGebruiker (GEB_Voornaam, GEB_Familienaam, GEB_Email, GEB_Wachtwoord) values('"
-        .$GEB_Voornaam."','".$GEB_Familienaam."','".$GEB_Email."','".$GEB_Wachtwoord."')") === TRUE) { // into $t
-        die(json_encode("Record added successfully"));
+    if ($conn->query("insert into tblGebruiker (GEB_Voornaam, GEB_Familienaam, GEB_Email, GEB_Wachtwoord) values('"
+        .$GEB_Voornaam."','".$GEB_Familienaam."','$GEB_Email','".$GEB_Wachtwoord."')") === TRUE) { // into $t
+        die(addJsonData("200","je werd met success geregistreerd."));////json_encode("Record added successfully"));
     } else {
-        die(json_encode("Error adding record: " . $conn -> error));
+        die(addJsonData("400","er werd een probleem vastgesteld tijdens je registratie. ERROR: " . $conn -> error));//json_encode("Error adding record: " . $conn -> error));
     }
 }
 
@@ -162,7 +161,7 @@ if ($bewerking == "addRou") { //MAAK EEN ROUTINE AAN (MET NAAM) (VOOR GEBRUIKER)
         $ROU_GEB_ID){
         // Controle om o.a. SQL injection te voorkomen.
     } else {
-        die(json_encode("missing data"));
+        die(addJsonData("400","missing data"));
     }
     
     if ($conn -> query("insert into tblRoutine (ROU_Naam, ROU_GEB_ID) values('"
@@ -175,9 +174,9 @@ if ($bewerking == "addRou") { //MAAK EEN ROUTINE AAN (MET NAAM) (VOOR GEBRUIKER)
         $returnGebJson = json_decode($returnGeb, true); // json versie object
         $naamGeb = $returnGebJson["data"][0]["GEB_Voornaam"];
 
-        die(json_encode("Record added successfully for $naamGeb"));
+        die(addJsonData("400","Record added successfully for $naamGeb"));
     } else {
-        die(json_encode("Error adding record: " . $conn -> error));
+        die(addJsonData("400","Error adding record: " . $conn -> error));
     }
 }
 
@@ -185,12 +184,12 @@ if ($bewerking == "delRou") { //VERWIJDER EEN ROUTINE
     if ($ROU_ID){
         // Controle om o.a. SQL injection te voorkomen.
     } else {
-        die(json_encode("missing data"));
+        die(addJsonData("400","missing data"));
     }
     if ($conn -> query("delete FROM tblRoutine where ROU_ID = $id") === TRUE) { // FROM $t
-        die(json_encode("Record deleted successfully"));
+        die(addJsonData("400","Record deleted successfully"));
     } else {
-        die(json_encode("Error deleting record: " . $conn -> error));
+        die(addJsonData("400","Error deleting record: " . $conn -> error));
     }
 }
 
@@ -231,7 +230,9 @@ if ($bewerking == "getKalForGeb") {
     $oefeningenJson = '{"oefeningen":' . json_encode($oefeningen) . '}';
     die($oefeningenJson);
 }
-
+function addJsonData($status,$data){
+ return '{"status":'.$status.',"data":'.json_encode($data).'}';
+}
 function getJsonObjFromResult(&$result)
 {
     // de & voor de parameter zorgt er voor dat we de de parameter
@@ -273,6 +274,6 @@ function getJsonObjFromResult(&$result)
     }
     
     // geef een json object terug
-    return '{"data":' . json_encode($fixed) . '}';
+    return addJsonData("200",$fixed);
 }
 ?>
