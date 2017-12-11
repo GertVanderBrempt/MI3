@@ -29,10 +29,10 @@ $GEB_Familienaam = $postvars['GEB_Familienaam'];
 $GEB_Email       = $postvars['GEB_Email'];       //-checkLogin
 $GEB_Wachtwoord  = $postvars['GEB_Wachtwoord'];  //-checkLogin
 //-addRou
-$ROU_Naam   = $_POST['ROU_Naam'];
-$ROU_GEB_ID = $_POST['ROU_GEB_ID'];
+$ROU_Naam   = $postvars['ROU_Naam'];
+$ROU_GEB_ID = $postvars['ROU_GEB_ID'];
 //-delRou
-$ROU_ID   = $_POST['ROU_ID'];
+$ROU_ID   = $postvars['ROU_ID'];
 
 // POST voor ajax
 if(isset($_POST['bewerking'])){
@@ -125,13 +125,15 @@ if ($bewerking == "getGeb") { // VRAAG EEN LIJST OP VAN GEBRUIKERS EN HUN INFO
     die($return);
 }
 if ($bewerking == "checkLogin") { //KIJK NA OF LOGIN INFO CORRECT IS
-    $result = $conn->query("SELECT GEB_Wachtwoord, GEB_Voornaam FROM tblGebruiker WHERE GEB_Email = '$GEB_Email'");
+    $result = $conn->query("SELECT GEB_Wachtwoord, GEB_Voornaam FROM tblGebruiker WHERE GEB_Email = '$GEB_Email'"); 
     $return = getJsonObjFromResult($result);// maakt van de inhoud van deze result een json object waarvan ook in android de juiste gegeventypes herkend worden
     mysqli_free_result($result);//maak geheugenresources vrij
     $returnLoginJson = json_decode($return, true); // json versie object
     $wachtwoord = $returnLoginJson["data"][0]["GEB_Wachtwoord"];
-    if ($wachtwoord == $GEB_Wachtwoord ) {
-        die($return);
+    if ($wachtwoord === $GEB_Wachtwoord ) {
+        //die($return);//wachtwoord moet niet meegestuurd worden
+        $myJsonObj = (object)array("GEB_Voornaam" => $returnLoginJson["data"][0]["GEB_Voornaam"]);
+        die(addJsonData("200",[$myJsonObj]));
     } else {
         die(addJsonData("400","login failed."));
     }
