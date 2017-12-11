@@ -2,6 +2,7 @@
 var myApp = new Framework7();
 // Export selectors engine
 var $$ = Dom7;
+var GEB_Voornaam = null;
 // Add view
 var mainView = myApp.addView('.view-main', {
     // Because we use fixed-through navbar we can enable dynamic navbar
@@ -31,6 +32,7 @@ function RegistreerGebruiker() {
     var GEB_Wachtwoord2 = $(".gf-input-wachtwoord2").val();
     if (data.GEB_Wachtwoord != GEB_Wachtwoord2) {
         $$(".gf-txt-warning").html("wachtwoorden komen niet overeen");
+        $$(".gf-txt-warning").css("color", "red");
     }
     else {
         data.GEB_Wachtwoord = CryptoJS.MD5(data.GEB_Wachtwoord).toString();
@@ -42,9 +44,11 @@ function RegistreerGebruiker() {
             , withCredentials: false
             , success: function (responseData, textStatus, jqXHR) {
                 $$(".gf-txt-warning").html((JSON.parse(responseData)).data);
+                $$(".gf-txt-warning").css("color", "green");
             }
             , error: function (responseData, textStatus, errorThrown) {
                 $$(".gf-txt-warning").html('POST failed. :' + errorThrown);
+                $$(".gf-txt-warning").css("color", "red");
             }
         });
     }
@@ -69,14 +73,33 @@ function LoginGebruiker() {
             , data: data
             , withCredentials: false
             , success: function (responseData, textStatus, jqXHR) {
-                $$(".gf-txt-warning").html((JSON.parse(responseData)).data);
+                if((JSON.parse(responseData)).status === 200){
+                    GEB_Voornaam = (JSON.parse(responseData)).data[0]["GEB_Voornaam"];
+                    $$(".gf-txt-warning").html(GEB_Voornaam +" werd met success ingelogd");
+                    $$(".gf-txt-warning").css("color", "green");
+                     mainView.router.loadPage({url:'home.html', ignoreCache:true, reload:true });
+                }
+                else{
+                    $$(".gf-txt-warning").html((JSON.parse(responseData)).data);
+                    $$(".gf-txt-warning").css("color", "red");
+                }
             }
             , error: function (responseData, textStatus, errorThrown) {
-                $$(".gf-txt-warning").html('POST failed. :' + errorThrown);
+                $$(".gf-txt-warning").html("Er ging iets mis tijdens het versturen :" + errorThrown);
+                $$(".gf-txt-warning").css("color", "red");
             }
         });
     //}
 }
+//
+myApp.onPageInit('home', function (page) {
+    /*$$('.gf-btn-login-gebruiker').on('click', function () {
+        LoginGebruiker();
+    });*/
+    if(GEB_Voornaam != null){
+        $$(".content-block-title").html("Welkom " + GEB_Voornaam);
+    }
+});
 // Callbacks to run specific code for specific pages, for example for About page:
 myApp.onPageInit('page1', function (page) {
     // run createContentPage func after link was clicked
