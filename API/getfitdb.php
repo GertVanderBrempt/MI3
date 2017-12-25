@@ -218,6 +218,20 @@ if ($bewerking == "delRou") { //VERWIJDER EEN ROUTINE
     }
 }
 
+if ($bewerking == "getRouForGeb") { 
+    //VRAAGT ROUTINES VOOR EEN GEBRUIKER OP AAN DE HAND VAN GEB_ID
+    $result = $conn->query("SELECT ROU_ID, ROU_Naam FROM tblRoutine WHERE ROU_GEB_ID = '$GEB_ID'");
+    $return = getJsonObjFromResult($result);
+    mysqli_free_result($result);
+    die($return);
+}
+if ($bewerking == "getRouForNotGeb") { 
+    //VRAAGT ALL ROUTINES MAAR ZONDER JOU ROUTINES OP AAN DE HAND VAN GEB_ID
+    $result = $conn->query("SELECT ROU_ID, ROU_Naam FROM tblRoutine WHERE ROU_GEB_ID <> '$GEB_ID'");
+    $return = getJsonObjFromResult($result);
+    mysqli_free_result($result);
+    die($return);
+}
 if ($bewerking == "getKalForGeb") { 
     //VRAAGT ROUTINES, BIJHORENDE OEFENINGEN EN DAG VAN UITVOERING OP AAN DE HAND VAN GEB_ID
     $result = $conn->query("SELECT DISTINCT ROU_Naam, OEF_Titel, OEF_ID, KIT_Datum FROM tblGebruiker INNER JOIN tblKalenderItem ON tblGebruiker.GEB_ID = tblKalenderItem.KIT_GEB_ID INNER JOIN tblRoutine ON tblKalenderItem.KIT_ROU_ID = tblRoutine.ROU_ID INNER JOIN tblRoutineItem ON tblRoutineItem.RIT_ROU_ID = tblRoutine.ROU_ID INNER JOIN tblOefening ON tblOefening.OEF_ID = tblRoutineItem.RIT_OEF_ID WHERE GEB_ID = '$GEB_ID'");
