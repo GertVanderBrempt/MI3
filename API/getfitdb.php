@@ -38,6 +38,11 @@ $ROU_GEB_ID = $postvars['ROU_GEB_ID'];
 $ROU_ID   = $postvars['ROU_ID'];
 //-getInfoOef
 $OEF_ID          = $postvars['OEF_ID'];
+$OEF_Titel       = $postvars['OEF_Titel'];
+$OEF_Spier       = $postvars['OEF_Spier'];
+$OEF_Beschrijving = $postvars['OEF_Beschrijving'];
+$OEF_Afbeelding  = $postvars['OEF_Afbeelding'];
+$OEF_AantalCal   = $postvars['OEF_AantalCal'];
 
 // POST voor ajax
 if(isset($_POST['bewerking'])){
@@ -206,33 +211,43 @@ if ($bewerking == "addGeb") { // MAAK EEN GEBRUIKER AAN : registeer
 
 
 if ($bewerking == "addOef") { 
-    /*//VRAAGT AFBEELDING EN BESCHRIJVINF VAN OEF OP BASIS VAN OEF_ID
-    $result = $conn->query("SELECT OEF_Titel, OEF_Afbeelding, OEF_Beschrijving, OEF_AantalCal, OEF_Spier, OEF_Categorie  FROM tblOefening WHERE OEF_ID = '$OEF_ID'");
-    $return = getJsonObjFromResult($result);
-    mysqli_free_result($result);
-    die($return);*/
-    if ($OEF_Titel && 
-        $OEF_Afbeelding && 
+    if ($OEF_Titel &&  
         $OEF_Beschrijving && 
-        $OEF_Afbeelding && 
-        $OEF_Afbeelding && 
-        $OEF_Afbeelding){
+        $OEF_AantalCal &&
+        $OEF_Spier &&
+        $GEB_ID) {
         // Controle om o.a. SQL injection te voorkomen.
     } else {
         die(addJsonData("400","missing data"));
     }
-    
-    if ($conn -> query("insert into tblRoutine (ROU_Naam, ROU_GEB_ID) values('"
-        .$ROU_Naam."','".$ROU_GEB_ID."')") === TRUE) { // into $t
+    $OEF_BeschrijvingBase64 = base64_decode($OEF_Beschrijving);
+    if ($conn -> query("insert into tblOefening (OEF_Titel, OEF_Spier, OEF_Beschrijving, OEF_AantalCal, OEF_GEB_ID) values('"
+        .$OEF_Titel."','".$OEF_Spier."','".$OEF_BeschrijvingBase64."','".$OEF_AantalCal."','".$GEB_ID."')") === TRUE) { // into $t
 
     	//CHECK LINK MET GEBRUIKER ID : TOON VOOR WELKE GEBRUIKER DE ROUTINE IS TOEGEVOEGD
-        $resultGeb = $conn->query("SELECT * FROM tblGebruiker where GEB_ID = $ROU_GEB_ID");
+        $id = mysqli_insert_id($conn);
+        die(addJsonData("200",$id));
+    } else {
+        die(addJsonData("400","Error adding record: " . $conn -> error));
+    }
+}
+
+if ($bewerking == "addImageToOef") { //Moet apart gebeuren, anders is het JSON object te groot
+    if ($OEF_ID && $OEF_Afbeelding){
+        // Controle om o.a. SQL injection te voorkomen.
+    } else {
+        die(addJsonData("400","missing data"));
+    }   
+    $decoded = ""; 
+    for ($i=0; $i < ceil(strlen($OEF_Afbeelding)/64); $i++) {
+        $decoded = $decoded . base64_decode(substr($OEF_Afbeelding,$i*64,64)); 
+    }
+    if ($conn -> query("UPDATE tblOefening SET OEF_Afbeelding = '$decoded' WHERE OEF_ID = '$OEF_ID'") === TRUE) { // into $t
+        $resultGeb = $conn->query("SELECT * FROM tblGebruiker where GEB_ID = $GEB_ID");
         $returnGeb = getJsonObjFromResult($resultGeb);
         mysqli_free_result($resultGeb); // maak geheugenresources vrij
         $returnGebJson = json_decode($returnGeb, true); // json versie object
         $naamGeb = $returnGebJson["data"][0]["GEB_Voornaam"];
-
-        die(addJsonData("200","Record added successfully for $naamGeb"));
     } else {
         die(addJsonData("400","Error adding record: " . $conn -> error));
     }
@@ -308,7 +323,7 @@ if ($bewerking == "getRouForNotGeb") {
 
 if ($bewerking == "getOefForGeb") { 
     //VRAAGT ROUTINES VOOR EEN GEBRUIKER OP AAN DE HAND VAN GEB_ID
-    $result = $conn->query("SELECT OEF_ID, OEF_Titel, OEF_GEB_ID FROM tblOefening WHERE OEF_GEB_ID = '$GEB_ID'");
+    $result = $conn->query("SELECT OEF_ID, OEF_Titel, OEF_Spier, OEF_GEB_ID FROM tblOefening WHERE OEF_GEB_ID = '$GEB_ID'");
     $return = getJsonObjFromResult($result);
     mysqli_free_result($result);
     die($return);
@@ -316,7 +331,7 @@ if ($bewerking == "getOefForGeb") {
 
 if ($bewerking == "getOefForNotGeb") { 
     //VRAAGT ROUTINES VOOR EEN GEBRUIKER OP AAN DE HAND VAN GEB_ID
-    $result = $conn->query("SELECT OEF_ID, OEF_Titel, OEF_GEB_ID FROM tblOefening WHERE OEF_GEB_ID <> '$GEB_ID'");
+    $result = $conn->query("SELECT OEF_ID, OEF_Titel, OEF_Spier, OEF_GEB_ID FROM tblOefening WHERE OEF_GEB_ID <> '$GEB_ID'");
     $return = getJsonObjFromResult($result);
     mysqli_free_result($result);
     die($return);
