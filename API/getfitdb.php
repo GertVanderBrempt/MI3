@@ -29,7 +29,8 @@ $GEB_Familienaam = $postvars['GEB_Familienaam'];
 $GEB_Email       = $postvars['GEB_Email'];       //-checkLogin
 $GEB_Wachtwoord  = $postvars['GEB_Wachtwoord'];  //-checkLogin
 $GEB_ID          = $postvars['GEB_ID']; //-getKalForGeb
-$KIT_DAG         = $postvars['KIT_DAG']; //-getKalForGeb
+$KIT_DAG         = $postvars['KIT_DAG']; //-getKalForGebOnDag
+$KIT_ID          = $postvars['KIT_ID']; //-delKit
 //-addRou
 $ROU_Naam   = $postvars['ROU_Naam'];
 $ROU_GEB_ID = $postvars['ROU_GEB_ID'];
@@ -83,6 +84,11 @@ if (isset($_POST['KIT_DAG'])){
         //zet waardes in variabelen
     $KIT_DAG = $_POST['KIT_DAG'];
 }
+//-delKit
+if (isset($_POST['KIT_ID'])){
+        //zet waardes in variabelen
+    $KIT_ID = $_POST['KIT_ID'];
+}
 //-getInfoOef
 if (isset($_POST['OEF_ID'])){
         //zet waardes in variabelen
@@ -115,6 +121,11 @@ if (isset($_GET['GEB_ID'])) {
 //-getKalForGebOnDag
 if (isset($_GET['KIT_DAG'])) {
    $KIT_DAG = $_GET['KIT_DAG'];
+}
+
+//-delKit
+if (isset($_GET['KIT_ID'])) {
+   $KIT_ID = $_GET['KIT_ID'];
 }
 
 //-checkLogin
@@ -233,10 +244,25 @@ if ($bewerking == "addRou") { //MAAK EEN ROUTINE AAN (MET NAAM) (VOOR GEBRUIKER)
         // Controle om o.a. SQL injection te voorkomen.
     } else {
         die(addJsonData("400","missing data"));
-    }
-    
+    }    
     if ($conn -> query("insert into tblRoutine (ROU_Naam, ROU_GEB_ID) values('"
         .$ROU_Naam."','".$ROU_GEB_ID."')") === TRUE) { // into $t
+        $id = mysqli_insert_id($conn);
+        die(addJsonData("200",$id));
+    } else {
+        die(addJsonData("400","Error adding record: " . $conn -> error));
+    }
+}
+
+if ($bewerking == "addRIT") {
+    if ($ROU_ID && 
+        $OEF_ID){
+        // Controle om o.a. SQL injection te voorkomen.
+    } else {
+        die(addJsonData("400","missing data"));
+    }
+    if ($conn -> query("insert into tblRoutineItem (RIT_ROU_ID, RIT_OEF_ID) values('"
+        .$ROU_ID."','".$OEF_ID."')") === TRUE) { // into $t
 
     	//CHECK LINK MET GEBRUIKER ID : TOON VOOR WELKE GEBRUIKER DE ROUTINE IS TOEGEVOEGD
         $resultGeb = $conn->query("SELECT * FROM tblGebruiker where GEB_ID = $ROU_GEB_ID");
@@ -271,6 +297,7 @@ if ($bewerking == "getRouForGeb") {
     mysqli_free_result($result);
     die($return);
 }
+
 if ($bewerking == "getRouForNotGeb") { 
     //VRAAGT ALL ROUTINES MAAR ZONDER JOU ROUTINES OP AAN DE HAND VAN GEB_ID
     $result = $conn->query("SELECT ROU_ID, ROU_Naam, ROU_GEB_ID FROM tblRoutine WHERE ROU_GEB_ID <> '$GEB_ID'");
@@ -278,6 +305,23 @@ if ($bewerking == "getRouForNotGeb") {
     mysqli_free_result($result);
     die($return);
 }
+
+if ($bewerking == "getOefForGeb") { 
+    //VRAAGT ROUTINES VOOR EEN GEBRUIKER OP AAN DE HAND VAN GEB_ID
+    $result = $conn->query("SELECT OEF_ID, OEF_Titel, OEF_GEB_ID FROM tblOefening WHERE OEF_GEB_ID = '$GEB_ID'");
+    $return = getJsonObjFromResult($result);
+    mysqli_free_result($result);
+    die($return);
+}
+
+if ($bewerking == "getOefForNotGeb") { 
+    //VRAAGT ROUTINES VOOR EEN GEBRUIKER OP AAN DE HAND VAN GEB_ID
+    $result = $conn->query("SELECT OEF_ID, OEF_Titel, OEF_GEB_ID FROM tblOefening WHERE OEF_GEB_ID <> '$GEB_ID'");
+    $return = getJsonObjFromResult($result);
+    mysqli_free_result($result);
+    die($return);
+}
+
 if ($bewerking == "getOefForRou") { 
     //VRAAGT OEFENINGEN (ID + Titel)  OP VOOR ROUTINE [ROUTINE (NAAM + GEB ID) ZIJN LOKAAL OPGESLAGEN]
     $result = $conn->query("SELECT OEF_ID, OEF_Titel FROM tblRoutineItem INNER JOIN tblOefening ON tblOefening.OEF_ID = tblRoutineItem.RIT_OEF_ID WHERE tblRoutineItem.RIT_ROU_ID = '$ROU_ID'");
@@ -289,7 +333,7 @@ if ($bewerking == "getOefForRou") {
 }
 if ($bewerking == "getKalForGeb") { 
     //VRAAGT ROUTINES, BIJHORENDE OEFENINGEN EN DAG VAN UITVOERING OP AAN DE HAND VAN GEB_ID
-    $result = $conn->query("SELECT DISTINCT ROU_Naam, ROU_ID, KIT_DAG FROM tblGebruiker INNER JOIN tblKalenderItem ON tblGebruiker.GEB_ID = tblKalenderItem.KIT_GEB_ID INNER JOIN tblRoutine ON tblKalenderItem.KIT_ROU_ID = tblRoutine.ROU_ID WHERE GEB_ID = '$GEB_ID'");
+    $result = $conn->query("SELECT DISTINCT KIT_ID, ROU_Naam, ROU_ID, ROU_GEB_ID, KIT_DAG FROM tblGebruiker INNER JOIN tblKalenderItem ON tblGebruiker.GEB_ID = tblKalenderItem.KIT_GEB_ID INNER JOIN tblRoutine ON tblKalenderItem.KIT_ROU_ID = tblRoutine.ROU_ID WHERE GEB_ID = '$GEB_ID'");
     $return = getJsonObjFromResult($result);
     mysqli_free_result($result);
     die($return);
@@ -297,7 +341,8 @@ if ($bewerking == "getKalForGeb") {
 
 if ($bewerking == "getKalForGebOnDay") { 
     //VRAAGT ROUTINES, BIJHORENDE OEFENINGEN EN DAG VAN UITVOERING OP AAN DE HAND VAN GEB_ID
-    $result = $conn->query("SELECT DISTINCT ROU_Naam, OEF_Titel, OEF_ID, KIT_DAG FROM tblGebruiker INNER JOIN tblKalenderItem ON tblGebruiker.GEB_ID = tblKalenderItem.KIT_GEB_ID INNER JOIN tblRoutine ON tblKalenderItem.KIT_ROU_ID = tblRoutine.ROU_ID INNER JOIN tblRoutineItem ON tblRoutineItem.RIT_ROU_ID = tblRoutine.ROU_ID INNER JOIN tblOefening ON tblOefening.OEF_ID = tblRoutineItem.RIT_OEF_ID WHERE GEB_ID = '$GEB_ID' AND KIT_DAG = '$KIT_DAG'");
+    //$result = $conn->query("SELECT DISTINCT ROU_Naam, OEF_Titel, OEF_ID, KIT_DAG FROM tblGebruiker INNER JOIN tblKalenderItem ON tblGebruiker.GEB_ID = tblKalenderItem.KIT_GEB_ID INNER JOIN tblRoutine ON tblKalenderItem.KIT_ROU_ID = tblRoutine.ROU_ID INNER JOIN tblRoutineItem ON tblRoutineItem.RIT_ROU_ID = tblRoutine.ROU_ID INNER JOIN tblOefening ON tblOefening.OEF_ID = tblRoutineItem.RIT_OEF_ID WHERE GEB_ID = '$GEB_ID' AND KIT_DAG = '$KIT_DAG'");
+    $result = $conn->query("SELECT DISTINCT ROU_Naam, ROU_ID, ROU_GEB_ID, KIT_DAG FROM tblGebruiker INNER JOIN tblKalenderItem ON tblGebruiker.GEB_ID = tblKalenderItem.KIT_GEB_ID INNER JOIN tblRoutine ON tblKalenderItem.KIT_ROU_ID = tblRoutine.ROU_ID WHERE GEB_ID = '$GEB_ID' AND KIT_DAG = '$KIT_DAG'");
     $return = getJsonObjFromResult($result);
     mysqli_free_result($result);
     die($return);
@@ -313,21 +358,23 @@ if ($bewerking == "getInfoOef") {
 
 
 if ($bewerking == "updateKal") { 
-    $gelukt = FALSE;
-    //Kijken of er al een routine bestaat voor deze gebruiker op deze dag => vervangen
-    $checkForResult = $conn -> query("SELECT * FROM tblKalenderItem WHERE KIT_GEB_ID = '$GEB_ID' AND KIT_DAG = '$KIT_DAG'");
-    if (mysqli_num_rows($checkForResult) > 0) {
-        $conn -> query("UPDATE tblKalenderItem SET KIT_ROU_ID = '$ROU_ID' WHERE KIT_GEB_ID = '$GEB_ID' AND KIT_DAG = '$KIT_DAG'");
-        if (mysqli_affected_rows($conn) > 0) {
-           $gelukt  = TRUE;
-        }
-    }else { //Anders voegen we een nieuw record toe
-        if ($conn -> query("INSERT INTO tblKalenderItem (KIT_ROU_ID, KIT_GEB_ID, KIT_DAG) values('"
-        .$ROU_ID."','".$GEB_ID."','".$KIT_DAG."')") === TRUE) { // into $t
-           $gelukt = TRUE;
-        } 
-    }  
-    if ($gelukt === TRUE) {
+    $check = $conn -> query("SELECT * FROM tblKalenderItem WHERE KIT_ID = '$KIT_ID'");
+    if (mysqli_num_rows($check) == 0) {
+        if ($conn -> query("INSERT INTO tblKalenderItem (KIT_ROU_ID, KIT_GEB_ID, KIT_DAG) values('".$ROU_ID."','".$GEB_ID."','".$KIT_DAG."')") === TRUE) { // into $t
+        //CHECK LINK MET GEBRUIKER ID : TOON VOOR WELKE GEBRUIKER DE ROUTINE IS TOEGEVOEGD
+        $resultGeb = $conn->query("SELECT * FROM tblGebruiker where GEB_ID = $GEB_ID");
+        $returnGeb = getJsonObjFromResult($resultGeb);
+        mysqli_free_result($resultGeb); // maak geheugenresources vrij
+        $returnGebJson = json_decode($returnGeb, true); // json versie object
+        $naamGeb = $returnGebJson["data"][0]["GEB_Voornaam"];
+        die(addJsonData("200","Kalendar updated successfully for $naamGeb"));
+    }}else {
+        die(addJsonData("400","Error updating kalendar!" . $conn -> error));
+    }
+}
+
+if ($bewerking == "deleteKit") { 
+    if ($conn -> query("DELETE FROM tblKalenderItem WHERE KIT_ID = '$KIT_ID'") === TRUE) { // into $t
         //CHECK LINK MET GEBRUIKER ID : TOON VOOR WELKE GEBRUIKER DE ROUTINE IS TOEGEVOEGD
         $resultGeb = $conn->query("SELECT * FROM tblGebruiker where GEB_ID = $GEB_ID");
         $returnGeb = getJsonObjFromResult($resultGeb);
